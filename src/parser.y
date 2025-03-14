@@ -39,11 +39,11 @@
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression expression constant_expression declaration init_declarator_list
 %type <node> init_declarator struct_specifier struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list
-%type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer parameter_list parameter_declaration
+%type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
 %type <node> compound_statement declaration_list expression_statement selection_statement iteration_statement jump_statement
 
-%type <node_list> statement_list
+%type <node_list> statement_list parameter_list parameter_declaration
 
 %type <string> unary_operator assignment_operator storage_class_specifier
 
@@ -132,15 +132,25 @@ cast_expression
 
 multiplicative_expression
 	: cast_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
+	| multiplicative_expression '*' cast_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Multiply, NodePtr($3));
+	}
+	| multiplicative_expression '/' cast_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Divide, NodePtr($3));
+	}
+	| multiplicative_expression '%' cast_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Modulo, NodePtr($3));
+	}
 	;
 
 additive_expression
 	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
+	| additive_expression '+' multiplicative_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Add, NodePtr($3));
+	}
+	| additive_expression '-' multiplicative_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Subtract, NodePtr($3));
+	}
 	;
 
 shift_expression
@@ -151,41 +161,63 @@ shift_expression
 
 relational_expression
 	: shift_expression
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression LE_OP shift_expression
-	| relational_expression GE_OP shift_expression
+	| relational_expression '<' shift_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::LessThan, NodePtr($3));
+	}
+	| relational_expression '>' shift_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::GreaterThan, NodePtr($3));
+	}
+	| relational_expression LE_OP shift_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::LessEqual, NodePtr($3));
+	}
+	| relational_expression GE_OP shift_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::GreaterEqual, NodePtr($3));
+	}
 	;
 
 equality_expression
 	: relational_expression
-	| equality_expression EQ_OP relational_expression
-	| equality_expression NE_OP relational_expression
+	| equality_expression EQ_OP relational_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::Equal, NodePtr($3));
+	}
+	| equality_expression NE_OP relational_expression{
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::NotEqual, NodePtr($3));
+	}
 	;
 
 and_expression
 	: equality_expression
-	| and_expression '&' equality_expression
+	| and_expression '&' equality_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::BitwiseAnd, NodePtr($3));
+	}
 	;
 
 exclusive_or_expression
 	: and_expression
-	| exclusive_or_expression '^' and_expression
+	| exclusive_or_expression '^' and_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::BitwiseXor, NodePtr($3));
+	}
 	;
 
 inclusive_or_expression
 	: exclusive_or_expression
-	| inclusive_or_expression '|' exclusive_or_expression
+	| inclusive_or_expression '|' exclusive_or_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::BitwiseOr, NodePtr($3));
+	}
 	;
 
 logical_and_expression
 	: inclusive_or_expression
-	| logical_and_expression AND_OP inclusive_or_expression
+	| logical_and_expression AND_OP inclusive_or_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::LogicalAnd, NodePtr($3));
+	}
 	;
 
 logical_or_expression
 	: logical_and_expression
-	| logical_or_expression OR_OP logical_and_expression
+	| logical_or_expression OR_OP logical_and_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::LogicalOr, NodePtr($3));
+	}
 	;
 
 conditional_expression

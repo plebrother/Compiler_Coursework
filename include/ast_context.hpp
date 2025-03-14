@@ -16,6 +16,7 @@ class Context
     /* TODO decide what goes inside here */
     private:
         bool usedReg[11] = {0,0,0,0,0,0,0,0,0,0,0};
+        int labelCounter = 0; // 为生成唯一标签添加计数器
 
     public:
         void useReg(int i){
@@ -26,13 +27,26 @@ class Context
         }
 
         int allocate(){
-            for (int i = 0; i < 12; i ++){
+            for (int i = 0; i < 11; i++){
                 if (usedReg[i] == 0){
                     useReg(i);
                     return i;
                 }
             }
             std::cerr << "no spare register"<< std::endl;
+            exit(1);
+        }
+
+        std::string getRegName(int regIndex) const {
+            return "s" + std::to_string(regIndex);
+        }
+
+        int getNextLabel() {
+            return labelCounter++;
+        }
+
+        void resetLabelCounter() {
+            labelCounter = 0;
         }
 };
 

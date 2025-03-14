@@ -13,6 +13,7 @@ void DeclareStatement::EmitRISC(std::ostream& stream, Context& context) const
     {
         declarator_->EmitRISC(stream, context);
     }
+    stream << ":" << std::endl;
     stream << ".zero 4" << std::endl;
 }
 
