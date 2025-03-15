@@ -24,6 +24,7 @@
   std::string*		string;
   TypeSpecifier 	type_specifier;
   yytokentype  		token;
+  int             assign_op;
 }
 
 %token IDENTIFIER INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL
@@ -45,7 +46,8 @@
 
 %type <node_list> statement_list parameter_list parameter_declaration
 
-%type <string> unary_operator assignment_operator storage_class_specifier
+%type <string> unary_operator storage_class_specifier
+%type <assign_op> assignment_operator
 
 %type <number_int> INT_CONSTANT STRING_LITERAL
 %type <number_float> FLOAT_CONSTANT
@@ -82,7 +84,9 @@ function_definition
 
 
 primary_expression
-	: IDENTIFIER
+	: IDENTIFIER { new VariableReference(*$1);
+					delete $1;
+	}
 	| INT_CONSTANT {
 		$$ = new IntConstant($1);
 	}
@@ -226,24 +230,39 @@ conditional_expression
 	;
 
 assignment_expression
-	: conditional_expression
-	| unary_expression assignment_operator assignment_expression
-	;
+    : conditional_expression
+    | unary_expression assignment_operator assignment_expression {
+		AssignmentOp op;
+        switch ($2) {
+            case 0: op = AssignmentOp::Assign; break;
+            case 1: op = AssignmentOp::MulAssign; break;
+            case 2: op = AssignmentOp::DivAssign; break;
+            case 3: op = AssignmentOp::ModAssign; break;
+            case 4: op = AssignmentOp::AddAssign; break;
+            case 5: op = AssignmentOp::SubAssign; break;
+            case 6: op = AssignmentOp::AndAssign; break;
+            case 7: op = AssignmentOp::XorAssign; break;
+            case 8: op = AssignmentOp::OrAssign; break;
+
+            default: std::cerr << "Unknown assignment operator" << std::endl; exit(1);
+        }
+        $$ = new AssignmentExpression(NodePtr($1), op, NodePtr($3));
+    }
+    ;
 
 assignment_operator
-	: '='
-	| MUL_ASSIGN
-	| DIV_ASSIGN
-	| MOD_ASSIGN
-	| ADD_ASSIGN
-	| SUB_ASSIGN
-	| LEFT_ASSIGN
-	| RIGHT_ASSIGN
-	| AND_ASSIGN
-	| XOR_ASSIGN
-	| OR_ASSIGN
-	;
-
+    : '='         { $$ = 0; }  // AssignmentOp::Assign
+    | ADD_ASSIGN  { $$ = 1; }  // AssignmentOp::AddAssign
+    | SUB_ASSIGN  { $$ = 2; }  // AssignmentOp::SubAssign
+    | MUL_ASSIGN  { $$ = 3; }  // AssignmentOp::MulAssign
+    | DIV_ASSIGN  { $$ = 4; }  // AssignmentOp::DivAssign
+    | MOD_ASSIGN  { $$ = 5; }  // AssignmentOp::ModAssign
+    | AND_ASSIGN  { $$ = 6; }  // AssignmentOp::AndAssign
+    | OR_ASSIGN   { $$ = 7; }  // AssignmentOp::OrAssign
+    | XOR_ASSIGN  { $$ = 8; }  // AssignmentOp::XorAssign
+    | LEFT_ASSIGN { $$ = 9; }
+    | RIGHT_ASSIGN { $$ = 10; }
+    ;
 expression
 	: assignment_expression
 	| expression ',' assignment_expression
