@@ -24,6 +24,19 @@ class Context
 
         bool in_global_scope_ = true;
 
+        int current_loop_start_ = -1;  // Label for the start of current loop
+        int current_loop_end_ = -1;    // Label for the end of current loop
+
+        enum class LoopType {
+            None,
+            While,
+            DoWhile,
+            For
+        };
+
+        LoopType current_loop_type_ = LoopType::None;
+        int current_loop_continue_ = -1;
+
     public:
         void useReg(int i){
             usedReg[i] = 1;
@@ -103,6 +116,61 @@ class Context
         void exitFunctionScope() {
             in_global_scope_ = true;
             resetVariables();
+        }
+
+        int getCurrentLoopStart() const {
+            return current_loop_start_;
+        }
+
+        int getCurrentLoopEnd() const {
+            return current_loop_end_;
+        }
+
+        void setCurrentLoopStart(int label) {
+            current_loop_start_ = label;
+        }
+
+        void setCurrentLoopEnd(int label) {
+            current_loop_end_ = label;
+        }
+
+        void enterWhileLoop() {
+            current_loop_type_ = LoopType::While;
+        }
+
+        void exitLoop() {
+            current_loop_type_ = LoopType::None;
+            current_loop_start_ = -1;
+            current_loop_end_ = -1;
+            current_loop_continue_ = -1;
+        }
+
+        bool isInWhileLoop() const {
+            return current_loop_type_ == LoopType::While;
+        }
+
+        void enterForLoop() {
+            current_loop_type_ = LoopType::For;
+        }
+
+        bool isInForLoop() const {
+            return current_loop_type_ == LoopType::For;
+        }
+
+        int getCurrentLoopContinue() const {
+            return current_loop_continue_;
+        }
+
+        void setCurrentLoopContinue(int label) {
+            current_loop_continue_ = label;
+        }
+
+        bool isInDoWhileLoop() const {
+            return current_loop_type_ == LoopType::DoWhile;
+        }
+
+        void enterDoWhileLoop() {
+            current_loop_type_ = LoopType::DoWhile;
         }
 };
 

@@ -17,5 +17,11 @@
 #include "ast_variable_declaration.hpp"
 #include "ast_variable.hpp"
 #include "ast_assignment_expression.hpp"
+#include "ast_if_statement.hpp"
+#include "ast_for_loop.hpp"
+#include "ast_while_loop.hpp"
+#include "ast_continue_statement.hpp"
+#include "ast_break_statement.hpp"
+#include "ast_do_while_loop.hpp"
 
 ast::NodePtr ParseAST(std::string file_name);

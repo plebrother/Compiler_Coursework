@@ -483,27 +483,43 @@ statement_list
 	;
 
 expression_statement
-	: ';'
+	: ';' { $$ = nullptr; }
 	| expression ';' { $$ = $1; }
 	;
 
 selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
+	: IF '(' expression ')' statement {
+		$$ = new IfStatement(NodePtr($3), NodePtr($5), nullptr);
+	}
+	| IF '(' expression ')' statement ELSE statement {
+		$$ = new IfStatement(NodePtr($3), NodePtr($5), NodePtr($7));
+	}
 	| SWITCH '(' expression ')' statement
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' statement
-	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
+	: WHILE '(' expression ')' statement {
+		$$ = new WhileStatement(NodePtr($3), NodePtr($5));
+	}
+	| DO statement WHILE '(' expression ')' ';' //{
+	//	$$ = new DoWhileStatement(NodePtr($2), NodePtr($5));
+	//}
+	| FOR '(' expression_statement expression_statement ')' statement {
+		$$ = new ForStatement(NodePtr($3), NodePtr($4), nullptr, NodePtr($6));
+	}
+	| FOR '(' expression_statement expression_statement expression ')' statement {
+		$$ = new ForStatement(NodePtr($3), NodePtr($4), NodePtr($5), NodePtr($7));
+	}
 	;
 
 jump_statement
 	: GOTO IDENTIFIER ';'
-	| CONTINUE ';'
-	| BREAK ';'
+	| CONTINUE ';' {
+		$$ = new ContinueStatement();
+	}
+	| BREAK ';' {
+		$$ = new BreakStatement();
+	}
 	| RETURN ';' {
 		$$ = new ReturnStatement(nullptr);
 	}
