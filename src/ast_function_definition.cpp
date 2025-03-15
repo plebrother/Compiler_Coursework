@@ -5,7 +5,7 @@
 
 namespace ast {
 
-int FunctionDefinition::calculateStackSize() const {
+int FunctionDefinition::calculateStackSize(const Context& context) const {
     // 基本栈大小 = 返回地址(4) + 帧指针(4) + 12个保存寄存器(48)
     int base_size = 56;
 
@@ -13,7 +13,11 @@ int FunctionDefinition::calculateStackSize() const {
     int param_space = parameter_list_.size() * 4;
 
     // 为局部变量预留额外空间 (可以根据compound_statement分析进一步优化)
-    int local_var_space = 16;
+    int local_var_space = context.getLocalVariablesSize();
+
+    if (local_var_space < 16) {
+        local_var_space = 16;
+    }
 
     return base_size + param_space + local_var_space;
 }
@@ -26,7 +30,8 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     }
 
     // 计算栈空间大小
-    int stacksize = calculateStackSize();
+    int stacksize = calculateStackSize(context);
+    context.enterFunctionScope();
 
     // 函数序言部分
     stream << ".text" << std::endl;
@@ -73,6 +78,8 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     // 返回
     stream << "    ret" << std::endl;
     stream << std::endl;
+
+    context.exitFunctionScope();
 }
 
 void FunctionDefinition::Print(std::ostream& stream) const

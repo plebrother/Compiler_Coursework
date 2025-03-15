@@ -254,7 +254,7 @@ constant_expression
 	;
 
 declaration
-	: declaration_specifiers ';'
+	: declaration_specifiers ';' { $$ = new DeclareStatement($1,nullptr);}
 	| declaration_specifiers init_declarator_list ';' { $$ = new DeclareStatement($1,NodePtr($2));}
 	;
 
@@ -271,8 +271,8 @@ init_declarator_list
 	;
 
 init_declarator
-	: declarator
-	| declarator '=' initializer
+	: declarator { $$ = new VariableDeclaration(TypeSpecifier::INT,NodePtr($1), nullptr); }
+	| declarator '=' initializer { $$ = new VariableDeclaration(TypeSpecifier::INT,NodePtr($1), NodePtr($3));} //assume declaration_specifiers = type_specifier = INT
 	;
 
 storage_class_specifier
