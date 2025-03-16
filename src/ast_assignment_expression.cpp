@@ -1,5 +1,6 @@
 #include "ast_assignment_expression.hpp"
 #include "ast_identifier.hpp"
+#include "ast_variable.hpp"
 #include <stdexcept>
 
 namespace ast {
@@ -23,13 +24,9 @@ void AssignmentExpression::EmitRISC(std::ostream& stream, Context& context) cons
     // Get the variable name from the left side
     // This assumes the left side is a direct variable reference (which is typically the case)
     // For more complex lvalues (like array elements), this would need to be extended
-    const Identifier* id = dynamic_cast<const Identifier*>(left_.get());
-    if (!id) {
-        std::cerr << "Error: Left side of assignment is not a variable" << std::endl;
-        exit(1);
-    }
 
-    std::string var_name = id->getName();
+    const VariableReference* var_ref = dynamic_cast<const VariableReference*>(left_.get());
+    std::string var_name = var_ref->getName();
 
     // Check if the variable exists
     if (!context.hasVariable(var_name)) {

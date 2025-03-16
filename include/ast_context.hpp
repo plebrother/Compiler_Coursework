@@ -37,7 +37,7 @@ class Context
         LoopType current_loop_type_ = LoopType::None;
         int current_loop_continue_ = -1;
 
-        std::vector<std::vector<std::string>> scopes_;
+        std::vector<std::unordered_map<std::string, int>> scopes_;
 
         int current_function_end_label_ = -1;
 
@@ -74,16 +74,13 @@ class Context
 
 
         void enterScope() {
-            scopes_.push_back({});
+            scopes_.push_back(variable_offsets_);
+            variable_offsets_.clear();
         }
 
         void exitScope() {
-            if (!scopes_.empty()) {
-                for (const auto& var : scopes_.back()) {
-                    variable_offsets_.erase(var);
-                }
-                scopes_.pop_back();
-            }
+            variable_offsets_ = scopes_.back();
+            scopes_.pop_back();
         }
 
 
@@ -91,19 +88,11 @@ class Context
 
         int addLocalVariable(const std::string& name) {
 
-            if (!scopes_.empty() &&
-                std::find(scopes_.back().begin(), scopes_.back().end(), name) != scopes_.back().end()) {
-                std::cerr << "Error: Variable '" << name << "' already declared in this scope" << std::endl;
-                exit(1);
-            }
 
             int offset = current_stack_offset_;
             variable_offsets_[name] = offset;
             current_stack_offset_ -= 4;  // 为int变量分配4字节
 
-            if (!scopes_.empty()) {
-                scopes_.back().push_back(name);
-            }
 
             return offset;
         }

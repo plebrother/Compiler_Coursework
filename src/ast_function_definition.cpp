@@ -50,11 +50,11 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     stream << "    addi sp, sp, " << -stacksize << std::endl;  // stack space
     stream << "    sw ra, " << stacksize - 4 << "(sp)" << std::endl;  // store ra
     stream << "    sw s0, " << stacksize - 8 << "(sp)" << std::endl;  // store fp
-    stream << "    addi s0, sp, " << stacksize << std::endl;  // set up new fp
+    stream << "    addi s0, sp, " << 4 << std::endl;  // set up new fp
 
     // 保存被调用者保存寄存器 (s1-s11)
     for (int i = 1; i <= 11; i++) {
-        stream << "    sw s" << i << ", " << stacksize - 8 - 4 * i << "(sp)" << std::endl;
+        stream << "    sw s" << i << ", " << stacksize - 16 - 4 * i << "(s0)" << std::endl;
     }
 
     // 处理函数参数 (假设参数通过寄存器a0-a7传递)
@@ -73,12 +73,12 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
     // 恢复被调用者保存寄存器
     for (int i = 1; i <= 11; i++) {
-        stream << "    lw s" << i << ", " << stacksize - 8 - 4 * i << "(sp)" << std::endl;
+        stream << "    lw s" << i << ", " << stacksize - 8 - 4 * i << "(s0)" << std::endl;
     }
 
     // 恢复返回地址和帧指针
-    stream << "    lw ra, " << stacksize - 4 << "(sp)" << std::endl;
-    stream << "    lw s0, " << stacksize - 8 << "(sp)" << std::endl;
+    stream << "    lw ra, " << stacksize - 8 << "(s0)" << std::endl;
+    stream << "    lw s0, " << stacksize - 12 << "(s0)" << std::endl;
     stream << "    addi sp, sp, " << stacksize << std::endl;  // 释放栈空间
 
     // 返回

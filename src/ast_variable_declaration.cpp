@@ -34,6 +34,7 @@ void VariableDeclaration::EmitRISC(std::ostream& stream, Context& context) const
         // Add to symbol table and get offset
         std::string var_name = id->getName();
         int offset = context.addLocalVariable(var_name);
+        stream << "addi sp,sp,-4"<< std::endl;
 
         // If there's an initializer, evaluate and store the result
         if (initializer_ != nullptr) {

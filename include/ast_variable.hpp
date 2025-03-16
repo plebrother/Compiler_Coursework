@@ -13,6 +13,7 @@ public:
 
     void EmitRISC(std::ostream& stream, Context& context) const override;
     void Print(std::ostream& stream) const override;
+    const std::string& getName() const { return name_; }
 };
 
 } // namespace ast

@@ -84,7 +84,7 @@ function_definition
 
 
 primary_expression
-	: IDENTIFIER { new VariableReference(*$1);
+	: IDENTIFIER { $$ = new VariableReference(*$1);
 					delete $1;
 	}
 	| INT_CONSTANT {
