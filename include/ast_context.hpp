@@ -37,6 +37,10 @@ class Context
         LoopType current_loop_type_ = LoopType::None;
         int current_loop_continue_ = -1;
 
+        std::vector<std::vector<std::string>> scopes_;
+
+        int current_function_end_label_ = -1;
+
     public:
         void useReg(int i){
             usedReg[i] = 1;
@@ -68,19 +72,42 @@ class Context
             labelCounter = 0;
         }
 
+
+        void enterScope() {
+            scopes_.push_back({});
+        }
+
+        void exitScope() {
+            if (!scopes_.empty()) {
+                for (const auto& var : scopes_.back()) {
+                    variable_offsets_.erase(var);
+                }
+                scopes_.pop_back();
+            }
+        }
+
+
+
+
         int addLocalVariable(const std::string& name) {
-            // Check if variable already exists
-            if (variable_offsets_.find(name) != variable_offsets_.end()) {
-                std::cerr << "Error: Variable '" << name << "' already declared" << std::endl;
+
+            if (!scopes_.empty() &&
+                std::find(scopes_.back().begin(), scopes_.back().end(), name) != scopes_.back().end()) {
+                std::cerr << "Error: Variable '" << name << "' already declared in this scope" << std::endl;
                 exit(1);
             }
 
-            // Allocate space on stack and track the offset
             int offset = current_stack_offset_;
             variable_offsets_[name] = offset;
-            current_stack_offset_ -= 4;  // Move to next position (4 bytes for int)
+            current_stack_offset_ -= 4;  // 为int变量分配4字节
+
+            if (!scopes_.empty()) {
+                scopes_.back().push_back(name);
+            }
+
             return offset;
         }
+
 
         int getVariableOffset(const std::string& name) const {
             auto it = variable_offsets_.find(name);
@@ -116,6 +143,14 @@ class Context
         void exitFunctionScope() {
             in_global_scope_ = true;
             resetVariables();
+        }
+
+        void setCurrentFunctionEndLabel(int label) {
+            current_function_end_label_ = label;
+        }
+
+        int getCurrentFunctionEndLabel() const {
+            return current_function_end_label_;
         }
 
         int getCurrentLoopStart() const {

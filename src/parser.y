@@ -38,13 +38,13 @@
 %type <node> translation_unit external_declaration function_definition primary_expression postfix_expression argument_expression_list
 %type <node> unary_expression cast_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression expression constant_expression declaration init_declarator_list
+%type <node> conditional_expression assignment_expression expression constant_expression declaration
 %type <node> init_declarator struct_specifier struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list
 %type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
-%type <node> compound_statement declaration_list expression_statement selection_statement iteration_statement jump_statement
+%type <node> compound_statement expression_statement selection_statement iteration_statement jump_statement
 
-%type <node_list> statement_list parameter_list parameter_declaration
+%type <node_list> statement_list parameter_list parameter_declaration init_declarator_list declaration_list
 
 %type <string> unary_operator storage_class_specifier
 %type <assign_op> assignment_operator
@@ -455,22 +455,25 @@ labeled_statement
 	;
 
 compound_statement
-	: '{' '}' {
-		// TODO: correct this
-		$$ = nullptr;
-	}
-	| '{' statement_list '}' {
-		$$ = $2;
-	}
-	| '{' declaration_list '}' {
-		// TODO: correct this
-		$$ = nullptr;
-	}
-	| '{' declaration_list statement_list '}'  {
-		// TODO: correct this
-		$$ = nullptr;
-	}
-	;
+    : '{' '}' {
+        $$ = new NodeList(nullptr);
+    }
+    | '{' statement_list '}' {
+        $$ = $2;
+    }
+    | '{' declaration_list '}' {
+        $$ = $2; // 使用declaration_list而非nullptr
+    }
+    | '{' declaration_list statement_list '}'  {
+        // 创建一个新的NodeList，将declaration_list作为第一个节点
+        NodeList* result = new NodeList(NodePtr($2));
+
+        // 然后将statement_list作为第二个节点添加
+        result->PushBack(NodePtr($3));
+
+        $$ = result;
+    }
+    ;
 
 declaration_list
 	: declaration

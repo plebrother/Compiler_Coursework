@@ -33,6 +33,10 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     int stacksize = calculateStackSize(context);
     context.enterFunctionScope();
 
+    // 生成唯一的函数结束标签
+    int func_end_label = context.getNextLabel();
+    context.setCurrentFunctionEndLabel(func_end_label);
+
     // 函数序言部分
     stream << ".text" << std::endl;
     stream << ".globl ";
@@ -64,6 +68,8 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
         compound_statement_->EmitRISC(stream, context);
     }
 
+    // 函数结束标签 - 注意这个标签现在放在函数体之后
+    stream << "func_end_" << func_end_label << ":" << std::endl;
 
     // 恢复被调用者保存寄存器
     for (int i = 1; i <= 11; i++) {
@@ -81,6 +87,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
     context.exitFunctionScope();
 }
+
 
 void FunctionDefinition::Print(std::ostream& stream) const
 {
