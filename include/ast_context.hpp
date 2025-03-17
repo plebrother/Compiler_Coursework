@@ -20,7 +20,7 @@ class Context
         int labelCounter = 0;
 
         std::unordered_map<std::string, int> variable_offsets_;
-        int current_stack_offset_ = -4;
+        int current_stack_offset_ = -16;
 
         bool in_global_scope_ = true;
 
@@ -88,7 +88,7 @@ class Context
 
         int addLocalVariable(const std::string& name) {
 
-
+            std::cout << current_stack_offset_ << std::endl;
             int offset = current_stack_offset_;
             variable_offsets_[name] = offset;
             current_stack_offset_ -= 4;  // 为int变量分配4字节
@@ -113,7 +113,7 @@ class Context
 
         void resetVariables() {
             variable_offsets_.clear();
-            current_stack_offset_ = -4;
+            current_stack_offset_ = -16;
         }
 
         int getLocalVariablesSize() const {

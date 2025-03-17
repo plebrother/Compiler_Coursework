@@ -330,7 +330,7 @@ def make(silent: bool) -> bool:
     """
     print(GREEN + "Running make..." + RESET)
     return_code, error_msg, _ = run_subprocess(
-        cmd=["make", "-C", PROJECT_LOCATION, "bin/c_compiler"], timeout=BUILD_TIMEOUT_SECONDS, silent=silent
+        cmd=["make", "-C", PROJECT_LOCATION,"-j9", "bin/c_compiler"], timeout=BUILD_TIMEOUT_SECONDS, silent=silent
     )
     if return_code != 0:
         print(RED + "Error when making:", error_msg + RESET)
