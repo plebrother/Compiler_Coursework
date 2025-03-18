@@ -53,7 +53,7 @@ class Context
             for (int i = 0; i < 11; i++){
                 if (usedReg[i] == 0){
                     useReg(i);
-                    return i;
+                    return i + 1;
                 }
             }
             std::cerr << "no spare register"<< std::endl;

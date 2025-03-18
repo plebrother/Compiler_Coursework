@@ -7,12 +7,7 @@ void CompoundStatement::EmitRISC(std::ostream& stream, Context& context) const
     // Create a new scope for variables declared within this block
     context.enterScope();
 
-    // First emit code for declarations (if any)
-    if (declarations_ != nullptr) {
-        declarations_->EmitRISC(stream, context);
-    }
-
-    // Then emit code for statements (if any)
+    // Emit code for all statements (including declarations)
     if (statements_ != nullptr) {
         statements_->EmitRISC(stream, context);
     }
@@ -25,12 +20,7 @@ void CompoundStatement::Print(std::ostream& stream) const
 {
     stream << "{" << std::endl;
 
-    // Print declarations if available
-    if (declarations_ != nullptr) {
-        declarations_->Print(stream);
-    }
-
-    // Print statements if available
+    // Print all statements (including declarations)
     if (statements_ != nullptr) {
         statements_->Print(stream);
     }

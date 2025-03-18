@@ -50,7 +50,8 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     stream << "    addi sp, sp, " << -stacksize << std::endl;  // stack space
     stream << "    sw ra, " << stacksize - 4 << "(sp)" << std::endl;  // store ra
     stream << "    sw s0, " << stacksize - 8 << "(sp)" << std::endl;  // store fp
-    stream << "    addi s0, sp, " << stacksize - 4 << std::endl;  // set up new fp
+    stream << "    addi s0, sp, " << stacksize << std::endl;  // set up new fp
+    //stream << "    mv s0, sp" << std::endl;
 
     // 保存被调用者保存寄存器 (s1-s11)
     // for (int i = 1; i <= 11; i++) {
@@ -58,10 +59,10 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     // }
 
     // 处理函数参数 (假设参数通过寄存器a0-a7传递)
-    for (size_t i = 0; i < parameter_list_.size() && i < 8; i++) {
+    //for (size_t i = 0; i < parameter_list_.size() && i < 8; i++) {
         // 将参数从参数寄存器移动到栈内存
-        stream << "    sw a" << i << ", " << -4 * (i + 1) << "(sp)" << std::endl;
-    }
+    //    stream << "    sw a" << i << ", " << -4 * (i + 1) << "(sp)" << std::endl;
+    //}
 
     // 函数体
     if (compound_statement_ != nullptr) {

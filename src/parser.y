@@ -456,28 +456,34 @@ labeled_statement
 
 compound_statement
     : '{' '}' {
-        $$ = new NodeList(nullptr);
+        $$ = new CompoundStatement(nullptr);
     }
     | '{' statement_list '}' {
-        $$ = new CompoundStatement(nullptr,NodePtr($2));
-    }
-    | '{' declaration_list '}' {
-        $$ = new CompoundStatement(NodePtr($2),nullptr);
-    }
-    | '{' declaration_list statement_list '}'  {
-        $$ = new CompoundStatement(NodePtr($2),NodePtr($3));
+        $$ = new CompoundStatement($2);
     }
     ;
 
 declaration_list
 	: declaration
-	| declaration_list declaration { $1->PushBack(NodePtr($2)); $$=$1; }
+	| declaration_list declaration
 	;
 
 statement_list
-	: statement { $$ = new NodeList(NodePtr($1)); }
-	| statement_list statement { $1->PushBack(NodePtr($2)); $$=$1; }
-	;
+    : statement {
+        $$ = new NodeList(NodePtr($1));
+    }
+    | declaration {
+        $$ = new NodeList(NodePtr($1));
+    }
+    | statement_list statement {
+        $1->PushBack(NodePtr($2));
+        $$ = $1;
+    }
+    | statement_list declaration {
+        $1->PushBack(NodePtr($1));
+        $$ = $1;
+    }
+    ;
 
 expression_statement
 	: ';' { $$ = nullptr; }
