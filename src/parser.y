@@ -459,25 +459,19 @@ compound_statement
         $$ = new NodeList(nullptr);
     }
     | '{' statement_list '}' {
-        $$ = $2;
+        $$ = new CompoundStatement(nullptr,NodePtr($2));
     }
     | '{' declaration_list '}' {
-        $$ = $2; // 使用declaration_list而非nullptr
+        $$ = new CompoundStatement(NodePtr($2),nullptr);
     }
     | '{' declaration_list statement_list '}'  {
-        // 创建一个新的NodeList，将declaration_list作为第一个节点
-        NodeList* result = new NodeList(NodePtr($2));
-
-        // 然后将statement_list作为第二个节点添加
-        result->PushBack(NodePtr($3));
-
-        $$ = result;
+        $$ = new CompoundStatement(NodePtr($2),NodePtr($3));
     }
     ;
 
 declaration_list
 	: declaration
-	| declaration_list declaration
+	| declaration_list declaration { $1->PushBack(NodePtr($2)); $$=$1; }
 	;
 
 statement_list

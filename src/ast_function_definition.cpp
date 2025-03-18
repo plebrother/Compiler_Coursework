@@ -50,7 +50,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     stream << "    addi sp, sp, " << -stacksize << std::endl;  // stack space
     stream << "    sw ra, " << stacksize - 4 << "(sp)" << std::endl;  // store ra
     stream << "    sw s0, " << stacksize - 8 << "(sp)" << std::endl;  // store fp
-    stream << "    addi s0, sp, " << stacksize << std::endl;  // set up new fp
+    stream << "    addi s0, sp, " << stacksize - 4 << std::endl;  // set up new fp
 
     // 保存被调用者保存寄存器 (s1-s11)
     // for (int i = 1; i <= 11; i++) {
@@ -79,7 +79,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     // 恢复返回地址和帧指针
     stream << "    lw ra, " << stacksize - 4 << "(sp)" << std::endl;
     stream << "    lw s0, " << stacksize - 8 << "(sp)" << std::endl;
-    stream << "    addi sp, sp, " << stacksize << std::endl;  // 释放栈空间
+    stream << "    addi sp, sp, " << stacksize  << std::endl;  // 释放栈空间
 
     // 返回
     stream << "    ret" << std::endl;
