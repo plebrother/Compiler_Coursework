@@ -43,8 +43,11 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     declarator_->Print(stream);
     stream << std::endl;
 
+    context.enterScope();
+
     // 函数标签
     declarator_->EmitRISC(stream, context);
+
 
     // 栈帧设置
     stream << "    addi sp, sp, " << -stacksize << std::endl;  // stack space
@@ -84,6 +87,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
     // 返回
     stream << "    ret" << std::endl;
+    context.exitScope();
     stream << std::endl;
 
     context.exitFunctionScope();

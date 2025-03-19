@@ -49,15 +49,15 @@ void WhileStatement::EmitRISC(std::ostream& stream, Context& context) const {
 }
 
 void WhileStatement::Print(std::ostream& stream) const {
-    stream << "while (";
+    stream << "while ";
     if (condition_ != nullptr) {
         condition_->Print(stream);
     }
-    stream << ") {" << std::endl;
+    //stream << ")" << std::endl;
     if (body_ != nullptr) {
         body_->Print(stream);
     }
-    stream << "}" << std::endl;
+    //stream << "}" << std::endl;
 }
 
 } // namespace ast

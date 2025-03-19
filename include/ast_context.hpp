@@ -74,6 +74,7 @@ class Context
 
 
         void enterScope() {
+            std::cerr << "enterScopr" << std::endl;
             scopes_.push_back(variable_offsets_);
             variable_offsets_.clear();
         }

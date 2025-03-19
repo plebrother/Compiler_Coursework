@@ -42,7 +42,7 @@
 %type <node> init_declarator struct_specifier struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list
 %type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
-%type <node> compound_statement expression_statement selection_statement iteration_statement jump_statement
+%type <node> compound_statement expression_statement selection_statement iteration_statement jump_statement scope_statement
 
 %type <node_list> statement_list parameter_list parameter_declaration init_declarator_list declaration_list
 
@@ -380,8 +380,8 @@ direct_declarator
 		delete $1;
 	}
 	| '(' declarator ')'
-	| direct_declarator '[' constant_expression ']'
-	| direct_declarator '[' ']'
+	| direct_declarator '[' constant_expression ']' { exit(1);} //array is causing weird infinite loop and lag my computer
+	| direct_declarator '[' ']'		{ exit(1);}
 	| direct_declarator '(' parameter_list ')'
 	| direct_declarator '(' identifier_list ')'
 	| direct_declarator '(' ')' {
@@ -446,7 +446,7 @@ initializer_list
 
 statement
 	: labeled_statement
-	| compound_statement
+	| scope_statement
 	| expression_statement
 	| selection_statement
 	| iteration_statement
@@ -465,6 +465,18 @@ compound_statement
     }
     | '{' statement_list '}' {
         $$ = new CompoundStatement(NodeListPtr($2));
+    }
+//	| expression_statement {
+//		$$ = $1;
+//	}
+    ;
+
+scope_statement
+    : '{' '}' {
+        $$ = new ScopeStatement(nullptr);
+    }
+    | '{' statement_list '}' {
+        $$ = new ScopeStatement(NodeListPtr($2));
     }
     ;
 
@@ -496,26 +508,26 @@ expression_statement
 	;
 
 selection_statement
-	: IF '(' expression ')' statement {
+	: IF '(' expression ')' compound_statement {
 		$$ = new IfStatement(NodePtr($3), NodePtr($5), nullptr);
 	}
-	| IF '(' expression ')' statement ELSE statement {
+	| IF '(' expression ')' compound_statement ELSE compound_statement {
 		$$ = new IfStatement(NodePtr($3), NodePtr($5), NodePtr($7));
 	}
-	| SWITCH '(' expression ')' statement
+	| SWITCH '(' expression ')' compound_statement
 	;
 
 iteration_statement
-	: WHILE '(' expression ')' statement {
+	: WHILE '(' expression ')' compound_statement {
 		$$ = new WhileStatement(NodePtr($3), NodePtr($5));
 	}
 	| DO statement WHILE '(' expression ')' ';' //{
 	//	$$ = new DoWhileStatement(NodePtr($2), NodePtr($5));
 	//}
-	| FOR '(' expression_statement expression_statement ')' statement {
+	| FOR '(' expression_statement expression_statement ')' compound_statement {
 		$$ = new ForStatement(NodePtr($3), NodePtr($4), nullptr, NodePtr($6));
 	}
-	| FOR '(' expression_statement expression_statement expression ')' statement {
+	| FOR '(' expression_statement expression_statement expression ')' compound_statement {
 		$$ = new ForStatement(NodePtr($3), NodePtr($4), NodePtr($5), NodePtr($7));
 	}
 	;
