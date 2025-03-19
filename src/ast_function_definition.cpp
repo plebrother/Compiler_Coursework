@@ -1,5 +1,6 @@
 #include "ast_function_definition.hpp"
 #include "ast_identifier.hpp"
+#include "ast_direct_declarator.hpp"
 #include <stdexcept>
 #include <sstream>
 
@@ -37,16 +38,22 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     int func_end_label = context.getNextLabel();
     context.setCurrentFunctionEndLabel(func_end_label);
 
+    const DirectDeclarator* direct_decl = dynamic_cast<const DirectDeclarator*>(declarator_.get());
+    std::string func_name;
+    const NodePtr& id_ptr = direct_decl->getIdentifier();
+    const Identifier* id = dynamic_cast<const Identifier*>(id_ptr.get());
+    func_name = id->getName();
+
+
     // 函数序言部分
     stream << ".text" << std::endl;
-    stream << ".globl ";
-    declarator_->Print(stream);
-    stream << std::endl;
+    stream << ".globl " << func_name << std::endl;
+
 
     context.enterScope();
 
     // 函数标签
-    declarator_->EmitRISC(stream, context);
+    stream << func_name << ":" << std::endl;
 
 
     // 栈帧设置
@@ -66,6 +73,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
         // 将参数从参数寄存器移动到栈内存
     //    stream << "    sw a" << i << ", " << -4 * (i + 1) << "(sp)" << std::endl;
     //}
+    direct_decl->EmitRISC(stream,context);
 
     // 函数体
     if (compound_statement_ != nullptr) {

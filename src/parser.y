@@ -40,11 +40,11 @@
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression expression constant_expression declaration
 %type <node> init_declarator struct_specifier struct_declaration_list struct_declaration specifier_qualifier_list struct_declarator_list
-%type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer
+%type <node> struct_declarator enum_specifier enumerator_list enumerator declarator direct_declarator pointer parameter_declaration
 %type <node> identifier_list type_name abstract_declarator direct_abstract_declarator initializer initializer_list statement labeled_statement
 %type <node> compound_statement expression_statement selection_statement iteration_statement jump_statement scope_statement
 
-%type <node_list> statement_list parameter_list parameter_declaration init_declarator_list declaration_list
+%type <node_list> statement_list parameter_list init_declarator_list declaration_list
 
 %type <string> unary_operator storage_class_specifier
 %type <assign_op> assignment_operator
@@ -382,10 +382,10 @@ direct_declarator
 	| '(' declarator ')'
 	| direct_declarator '[' constant_expression ']' { exit(1);} //array is causing weird infinite loop and lag my computer
 	| direct_declarator '[' ']'		{ exit(1);}
-	| direct_declarator '(' parameter_list ')'
+	| direct_declarator '(' parameter_list ')' { $$ = new DirectDeclarator(NodePtr($1),NodeListPtr($3));}
 	| direct_declarator '(' identifier_list ')'
 	| direct_declarator '(' ')' {
-		$$ = new DirectDeclarator(NodePtr($1));
+		$$ = new DirectDeclarator(NodePtr($1),nullptr);
 	}
 	;
 
@@ -395,14 +395,14 @@ pointer
 	;
 
 parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
+	: parameter_declaration { $$ = new NodeList(NodePtr($1)); }
+	| parameter_list ',' parameter_declaration { $1->PushBack(NodePtr($3)); $$ = $1; }
 	;
 
 parameter_declaration
-	: declaration_specifiers declarator
+	: declaration_specifiers declarator { $$ = new ParameterDeclaration($1,NodePtr($2)); }
 	| declaration_specifiers abstract_declarator
-	| declaration_specifiers
+	| declaration_specifiers { $$ = new ParameterDeclaration($1,nullptr); }
 	;
 
 identifier_list
