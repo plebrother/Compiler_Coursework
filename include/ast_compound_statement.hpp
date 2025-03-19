@@ -9,11 +9,11 @@ namespace ast {
 class CompoundStatement : public Node
 {
 private:
-    NodeList* statements_; // The list containing both declarations and statements
+    NodeListPtr statements_; // The list containing both declarations and statements
 
 public:
     // Constructor that takes a single NodeList containing all statements and declarations
-    CompoundStatement(NodeList* statements)
+    CompoundStatement(NodeListPtr statements)
         : statements_(std::move(statements)) {}
 
 

@@ -274,7 +274,7 @@ constant_expression
 
 declaration
 	: declaration_specifiers ';' { $$ = new DeclareStatement($1,nullptr);}
-	| declaration_specifiers init_declarator_list ';' { $$ = new DeclareStatement($1,$2);}
+	| declaration_specifiers init_declarator_list ';' { $$ = new DeclareStatement($1,NodeListPtr($2));}
 	;
 
 declaration_specifiers
@@ -464,7 +464,7 @@ compound_statement
         $$ = new CompoundStatement(nullptr);
     }
     | '{' statement_list '}' {
-        $$ = new CompoundStatement($2);
+        $$ = new CompoundStatement(NodeListPtr($2));
     }
     ;
 

@@ -22,6 +22,7 @@ public:
 // (and get rid of the now unnecessary std::move-s)
 using NodePtr = std::unique_ptr<const Node>;
 
+
 class NodeList : public Node
 {
 private:
@@ -35,4 +36,5 @@ public:
     virtual void Print(std::ostream& stream) const override;
 };
 
+using NodeListPtr = std::unique_ptr<const NodeList>;
 } // namespace ast
