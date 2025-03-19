@@ -8,6 +8,10 @@
 enum Reg {
     s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11, //x18-27: maintained across calls
 };
+
+enum Para {
+    a0,a1,a2,a3,a4,a5,a6,a7, //pass parameters
+};
 namespace ast {
 // An object of class Context is passed between ast nodes during compilation.
 // This can be used to pass around information about what's currently being
@@ -17,6 +21,7 @@ class Context
     /* TODO decide what goes inside here */
     private:
         bool usedReg[11] = {0,0,0,0,0,0,0,0,0,0,0};
+        bool usedPara[8] = {0,0,0,0,0,0,0,0};
         int labelCounter = 0;
 
         std::unordered_map<std::string, int> variable_offsets_;
@@ -58,6 +63,23 @@ class Context
             }
             std::cerr << "no spare register"<< std::endl;
             exit(1);
+        }
+
+        int allocatePara(){
+            for (int i = 0; i < 8; i++){
+                if (usedPara[i] == 0){
+                    usedPara[i] = 1;
+                    return i;
+                }
+            }
+            std::cerr << "no spare parameter register to use" << std::endl;
+            exit(1);
+        }
+
+        void freePara(){
+            for (int i = 0; i < 8; i++){
+                usedPara[i] = 0;
+            }
         }
 
         std::string getRegName(int regIndex) const {

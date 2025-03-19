@@ -75,6 +75,7 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     //}
     direct_decl->EmitRISC(stream,context);
 
+    context.freePara();
     // 函数体
     if (compound_statement_ != nullptr) {
         compound_statement_->EmitRISC(stream, context);

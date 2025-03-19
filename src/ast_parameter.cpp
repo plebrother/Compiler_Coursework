@@ -14,17 +14,10 @@ void ParameterDeclaration::EmitRISC(std::ostream& stream, Context& context) cons
     std::string para_name = id->getName();
 
     int offset = context.addLocalVariable(para_name);
-    stream << "parameter with offset: " << offset << std::endl;
-    //int offset = context.addLocalVariable(para_name);
+    //stream << "parameter with offset: " << offset << std::endl;
+    std::string para_reg = "a";
+    stream << "sw " << para_reg << context.allocatePara() << ", " << offset << "(s0)" << std::endl;
 
-    //stream << "addi sp,sp,-4"<< std::endl;
-
-    // If there's an initializer, evaluate and store the result
-    //if (initializer_ != nullptr) {
-        // Evaluate initializer expression (result will be in a0)
-    //    initializer_->EmitRISC(stream, context);
-        // Store result to variable's stack location
-    //    stream << "    sw a0, " << offset << "(s0)" << std::endl;
     }
 
 
