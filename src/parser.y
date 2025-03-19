@@ -274,7 +274,7 @@ constant_expression
 
 declaration
 	: declaration_specifiers ';' { $$ = new DeclareStatement($1,nullptr);}
-	| declaration_specifiers init_declarator_list ';' { $$ = new DeclareStatement($1,NodePtr($2));}
+	| declaration_specifiers init_declarator_list ';' { $$ = new DeclareStatement($1,$2);}
 	;
 
 declaration_specifiers
@@ -285,8 +285,13 @@ declaration_specifiers
 	;
 
 init_declarator_list
-	: init_declarator
-	| init_declarator_list ',' init_declarator
+	: init_declarator {
+		$$ = new NodeList(NodePtr($1));
+	}
+	| init_declarator_list ',' init_declarator  {
+		$1->PushBack(NodePtr($3));
+        $$ = $1;
+	}
 	;
 
 init_declarator
@@ -480,7 +485,7 @@ statement_list
         $$ = $1;
     }
     | statement_list declaration {
-        $1->PushBack(NodePtr($1));
+        $1->PushBack(NodePtr($2));
         $$ = $1;
     }
     ;

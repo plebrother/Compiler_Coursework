@@ -120,14 +120,14 @@ void FunctionDefinition::Print(std::ostream& stream) const
         stream << "void";
     }
 
-    stream << ") {" << std::endl;
+    stream << ")" << std::endl;
 
     // 打印函数体
     if (compound_statement_ != nullptr) {
         compound_statement_->Print(stream);
     }
 
-    stream << "}" << std::endl;
+    //stream << "}" << std::endl;
 }
 
 } // namespace ast

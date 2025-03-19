@@ -131,5 +131,6 @@ void AssignmentExpression::Print(std::ostream& stream) const
     }
 
     right_->Print(stream);
+    stream << ";" << std::endl;
 }
 } // namespace ast
