@@ -20,7 +20,7 @@ int FunctionDefinition::calculateStackSize(const Context&) const {
     //     local_var_space = 16;
     // }
 
-    return 108;
+    return 112;
 }
 
 void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
@@ -64,13 +64,13 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
     // 保存被调用者保存寄存器 (s1-s11)
     int reg_stack_offset = -16;
-    for (int i = 1; i <= 11; i++) {
-        if (context.Regused(i-1)){
-            stream << "    sw s" << i << ", " << stacksize - reg_stack_offset << "(sp)" << std::endl;
-            reg_stack_offset = reg_stack_offset - 4;
-        }
+    // for (int i = 1; i <= 11; i++) {
+    //     if (context.Regused(i-1)){
+    //         stream << "    sw s" << i << ", " << stacksize - reg_stack_offset << "(sp)" << std::endl;
+    //         reg_stack_offset = reg_stack_offset - 4;
+    //     }
 
-    }
+    // }
 
     context.set_variable_stack_offset(reg_stack_offset);
 

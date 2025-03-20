@@ -24,7 +24,6 @@ void FunctionCall::EmitRISC(std::ostream& stream, Context& context) const
 
 
 
-
     if (arguments_ != nullptr) {
         const std::vector<NodePtr>& args = arguments_->getNodes();
 
@@ -45,9 +44,32 @@ void FunctionCall::EmitRISC(std::ostream& stream, Context& context) const
     //std::string function_name = function_name_->getName();
     //function_name_->EmitRISC(stream,context);
 
+    int reg_stack_offset = context.get_current_stack_offset();
+    int stacksize = 112;
+
+    for (int i = 1; i <= 11; i++) {
+        if (context.Regused(i-1)){
+            reg_stack_offset = reg_stack_offset - 4;
+            stream << "    sw s" << i << ", " << stacksize + reg_stack_offset << "(sp)" << std::endl;
+        }
+
+    }
+
+
+
+
     stream << "    # function call " << function_name_ << std::endl;
     stream << "    call " << function_name_ << std::endl;
 
+
+    for (int i = 11; i >= 1; i--) {
+        if (context.Regused(i-1)){
+            stream << "    lw s" << i << ", " << stacksize + reg_stack_offset << "(sp)" << std::endl;
+            reg_stack_offset = reg_stack_offset + 4;
+        }
+    }
+
+    context.set_variable_stack_offset(reg_stack_offset);
 
 
 }

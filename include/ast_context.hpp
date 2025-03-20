@@ -169,6 +169,10 @@ class Context
             return -current_stack_offset_ - 4;  // Convert to positive size
         }
 
+        int get_current_stack_offset(){
+            return current_stack_offset_;
+        }
+
         bool isGlobalScope() const {
             return in_global_scope_;
         }
