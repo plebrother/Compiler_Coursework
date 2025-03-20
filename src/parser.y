@@ -102,7 +102,7 @@ primary_expression
 	}
     | FLOAT_CONSTANT
 	| STRING_LITERAL
-	| '(' expression ')'
+	| '(' expression ')' { $$ = $2; }
 	;
 
 postfix_expression
@@ -174,8 +174,12 @@ additive_expression
 
 shift_expression
 	: additive_expression
-	| shift_expression LEFT_OP additive_expression
-	| shift_expression RIGHT_OP additive_expression
+	| shift_expression LEFT_OP additive_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::LeftShift, NodePtr($3));
+	}
+	| shift_expression RIGHT_OP additive_expression {
+		$$ = new BinaryExpression(NodePtr($1), BinaryOp::RightShift, NodePtr($3));
+	}
 	;
 
 relational_expression

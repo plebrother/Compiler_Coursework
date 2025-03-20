@@ -20,7 +20,9 @@ enum class BinaryOp {
     LessThan,   // <
     GreaterThan,// >
     LessEqual,  // <=
-    GreaterEqual// >=
+    GreaterEqual,// >=
+    LeftShift,  // <<
+    RightShift  // >>
 };
 
 class BinaryExpression : public Node

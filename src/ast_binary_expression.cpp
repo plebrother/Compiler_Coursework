@@ -46,6 +46,12 @@ void BinaryExpression::EmitRISC(std::ostream& stream, Context& context) const
         case BinaryOp::BitwiseXor:
             stream << "xor a0, " << left_reg_name << ", " << right_reg_name << std::endl;
             break;
+        case BinaryOp::LeftShift:
+            stream << "sll a0, " << left_reg_name << ", " << right_reg_name << std::endl;
+            break;
+        case BinaryOp::RightShift:
+            stream << "srl a0, " << left_reg_name << ", " << right_reg_name << std::endl;
+            break;
         case BinaryOp::LogicalAnd: {
             // Implement logical AND: if left is 0, result is 0, otherwise result is (right != 0)
             int label_end = context.getNextLabel();
@@ -150,6 +156,12 @@ void BinaryExpression::Print(std::ostream& stream) const
             break;
         case BinaryOp::GreaterEqual:
             stream << " >= ";
+            break;
+        case BinaryOp::LeftShift:
+            stream << " << ";
+            break;
+        case BinaryOp::RightShift:
+            stream << " >> ";
             break;
     }
 
