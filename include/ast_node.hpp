@@ -32,6 +32,7 @@ public:
     NodeList(NodePtr first_node) { nodes_.push_back(std::move(first_node)); }
 
     void PushBack(NodePtr item);
+    const std::vector<NodePtr>& getNodes() const { return nodes_; }
     virtual void EmitRISC(std::ostream& stream, Context& context) const override;
     virtual void Print(std::ostream& stream) const override;
 };

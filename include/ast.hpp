@@ -26,5 +26,6 @@
 #include "ast_compound_statement.hpp"
 #include "ast_scope_statement.hpp"
 #include "ast_parameter.hpp"
+#include "ast_function_call.hpp"
 
 ast::NodePtr ParseAST(std::string file_name);
