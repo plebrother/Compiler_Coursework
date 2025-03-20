@@ -35,7 +35,8 @@
 %token STRUCT UNION ENUM ELLIPSIS
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> translation_unit external_declaration function_definition primary_expression postfix_expression argument_expression_list
+%type <node_list> translation_unit
+%type <node> external_declaration function_definition primary_expression postfix_expression argument_expression_list
 %type <node> unary_expression cast_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression expression constant_expression declaration
@@ -64,13 +65,17 @@ ROOT
   : translation_unit { g_root = $1; }
 
 translation_unit
-	: external_declaration { $$ = $1; }
-	| translation_unit external_declaration
+	: external_declaration { $$ = new NodeList(NodePtr($1)); }
+	| translation_unit external_declaration {
+		$1->PushBack(NodePtr($2));
+		$$ = $1;
+	}
 	;
 
 external_declaration
 	: function_definition { $$ = $1; }
-	| declaration
+	| declaration_specifiers direct_declarator '(' ')' ';' { $$ = new FunctionDefinition($1,NodePtr($2),nullptr); }
+//	| declaration
 	;
 
 function_definition

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <array>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -43,6 +44,7 @@ class Context
         int current_loop_continue_ = -1;
 
         std::vector<std::unordered_map<std::string, int>> scopes_;
+        std::vector<std::array<bool, 11>> scopes_reg_;
 
         int current_function_end_label_ = -1;
 
@@ -63,6 +65,10 @@ class Context
             }
             std::cerr << "no spare register"<< std::endl;
             exit(1);
+        }
+
+        bool Regused(int i){
+            return (usedReg[i] == 1);
         }
 
         int allocatePara(){
@@ -96,14 +102,29 @@ class Context
 
 
         void enterScope() {
-            std::cerr << "enterScopr" << std::endl;
+            std::cerr << "enterScope" << std::endl;
             scopes_.push_back(variable_offsets_);
+
+            std::array<bool, 11> current_regs;
+            for (int i = 0; i < 11; i++) {
+                current_regs[i] = usedReg[i];
+            }
+            scopes_reg_.push_back(current_regs);
             variable_offsets_.clear();
+            for (int i = 0; i < 11; i++){
+                usedReg[i] = 0;
+            }
         }
 
         void exitScope() {
+            std::cerr << "exitScope" << std::endl;
             variable_offsets_ = scopes_.back();
+            std::array<bool, 11> prev_reg = scopes_reg_.back();
+            for (int i = 0; i < 11; i++){
+                usedReg[i] = prev_reg[i];
+            }
             scopes_.pop_back();
+            scopes_reg_.pop_back();
         }
 
 
@@ -132,6 +153,11 @@ class Context
 
         bool hasVariable(const std::string& name) const {
             return variable_offsets_.find(name) != variable_offsets_.end();
+        }
+
+        void set_variable_stack_offset(int i){
+            std::cerr << "set variable stack offset to:" << i << std::endl;
+            current_stack_offset_ = i;
         }
 
         void resetVariables() {

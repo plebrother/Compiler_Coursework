@@ -20,7 +20,7 @@ int FunctionDefinition::calculateStackSize(const Context&) const {
     //     local_var_space = 16;
     // }
 
-    return 64;
+    return 108;
 }
 
 void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
@@ -46,11 +46,10 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
 
     // 函数序言部分
-    stream << ".text" << std::endl;
+
     stream << ".globl " << func_name << std::endl;
 
 
-    context.enterScope();
 
     // 函数标签
     stream << func_name << ":" << std::endl;
@@ -64,15 +63,24 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     //stream << "    mv s0, sp" << std::endl;
 
     // 保存被调用者保存寄存器 (s1-s11)
-    // for (int i = 1; i <= 11; i++) {
-    //     stream << "    sw s" << i << ", " << stacksize - 16 - 4 * i << "(sp)" << std::endl;
-    // }
+    int reg_stack_offset = -16;
+    for (int i = 1; i <= 11; i++) {
+        if (context.Regused(i-1)){
+            stream << "    sw s" << i << ", " << stacksize - reg_stack_offset << "(sp)" << std::endl;
+            reg_stack_offset = reg_stack_offset - 4;
+        }
+
+    }
+
+    context.set_variable_stack_offset(reg_stack_offset);
 
     // 处理函数参数 (假设参数通过寄存器a0-a7传递)
     //for (size_t i = 0; i < parameter_list_.size() && i < 8; i++) {
         // 将参数从参数寄存器移动到栈内存
     //    stream << "    sw a" << i << ", " << -4 * (i + 1) << "(sp)" << std::endl;
     //}
+    context.enterScope();
+
     direct_decl->EmitRISC(stream,context);
 
     context.freePara();
