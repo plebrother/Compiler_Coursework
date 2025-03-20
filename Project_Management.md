@@ -17,6 +17,8 @@ Despite the significant management issues in this project, we learned a lot from
 
 ---
 
+[commit history](https://github.com/LangProc/langproc-2024-cw-Yikai_Peter/commits/main)
+
 #### **3. Milestones**
 | Milestone  | Status |
 |-----------|--------|
@@ -43,7 +45,7 @@ Despite the significant management issues in this project, we learned a lot from
 
 ---
 
-### **4. Week-by-week View**
+#### **4. Week-by-week View**
 
 - **third week(10/03-16/03)**
   1. finish other course's lab and report
@@ -69,7 +71,7 @@ Despite the significant management issues in this project, we learned a lot from
 | A file containing just a single function with no arguments   |                   6 hrs                   |     👎      |
 | Variables of int type                                        |                   2 hrs                   |     👌      |
 | Local variables                                              |            Very long (15 hrs)             |     👎      |
-| Arithmetic and logical expressions                           |                   6 hrs                   |     👍      |
+| Arithmetic and logical expressions                           |                   6 hrs                   |     👌      |
 | If-then-else statements                                      |                   1.5 hrs                   |     👍      |
 | While loops                                                  |         4 hrs (loops in total)          |     👍      |
 | **Intermediate Features**                                    |                                           |              |
@@ -90,7 +92,7 @@ Despite the significant management issues in this project, we learned a lot from
 | Calling externally-defined functions                         |                   1 hrs                   |     👍      |
 | Functions that take more than 8 parameters                   |                         \                   |     \      |
 | Mutually recursive function calls                            |             2 hrs (failed)                  |     👎      |
-| Locally scoped variable declarations                         |                   1 hrs                   |     👌      |
+| Locally scoped variable declarations                         |                   1 hrs (partially implemented)        |     👎      |
 | The typedef keyword                                          |                     \                     |     \      |
 | The sizeof(...) function                                     |                   \                     |     \      |
 | Taking the address of a variable using the & operator        |                  \                        |     \      |
@@ -103,4 +105,4 @@ Despite the significant management issues in this project, we learned a lot from
 | **Parser**                                                   | Completed after each feature is completed |            |
 
 ---
-[commit history](https://github.com/LangProc/langproc-2024-cw-Yikai_Peter/commits/main)
+
