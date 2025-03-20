@@ -135,7 +135,7 @@ class Context
             std::cout << current_stack_offset_ << std::endl;
             int offset = current_stack_offset_;
             variable_offsets_[name] = offset;
-            current_stack_offset_ -= 4;  // 为int变量分配4字节
+            current_stack_offset_ -= 4;
 
 
             return offset;

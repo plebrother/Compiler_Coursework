@@ -7,13 +7,13 @@
 namespace ast {
 
 int FunctionDefinition::calculateStackSize(const Context&) const {
-    // 基本栈大小 = 返回地址(4) + 帧指针(4) + 12个保存寄存器(48)
+
     // int base_size = 56;
 
-    // // 为参数预留空间 (4字节对齐)
+
     // int param_space = parameter_list_.size() * 4;
 
-    // // 为局部变量预留额外空间 (可以根据compound_statement分析进一步优化)
+
     // int local_var_space = context.getLocalVariablesSize();
 
     // if (local_var_space < 16) {
@@ -30,11 +30,11 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
         return;
     }
 
-    // 计算栈空间大小
+
     int stacksize = calculateStackSize(context);
     context.enterFunctionScope();
 
-    // 生成唯一的函数结束标签
+
     int func_end_label = context.getNextLabel();
     context.setCurrentFunctionEndLabel(func_end_label);
 
@@ -45,24 +45,24 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     func_name = id->getName();
 
 
-    // 函数序言部分
+
 
     stream << ".globl " << func_name << std::endl;
 
 
 
-    // 函数标签
+
     stream << func_name << ":" << std::endl;
 
 
-    // 栈帧设置
+
     stream << "    addi sp, sp, " << -stacksize << std::endl;  // stack space
     stream << "    sw ra, " << stacksize - 4 << "(sp)" << std::endl;  // store ra
     stream << "    sw s0, " << stacksize - 8 << "(sp)" << std::endl;  // store fp
     stream << "    addi s0, sp, " << stacksize << std::endl;  // set up new fp
     //stream << "    mv s0, sp" << std::endl;
 
-    // 保存被调用者保存寄存器 (s1-s11)
+
     int reg_stack_offset = -16;
     // for (int i = 1; i <= 11; i++) {
     //     if (context.Regused(i-1)){
@@ -74,9 +74,9 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
     context.set_variable_stack_offset(reg_stack_offset);
 
-    // 处理函数参数 (假设参数通过寄存器a0-a7传递)
+
     //for (size_t i = 0; i < parameter_list_.size() && i < 8; i++) {
-        // 将参数从参数寄存器移动到栈内存
+
     //    stream << "    sw a" << i << ", " << -4 * (i + 1) << "(sp)" << std::endl;
     //}
     context.enterScope();
@@ -84,25 +84,25 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
     direct_decl->EmitRISC(stream,context);
 
     context.freePara();
-    // 函数体
+
     if (compound_statement_ != nullptr) {
         compound_statement_->EmitRISC(stream, context);
     }
 
-    // 函数结束标签 - 注意这个标签现在放在函数体之后
+
     stream << "func_end_" << func_end_label << ":" << std::endl;
 
-    // 恢复被调用者保存寄存器
+
     // for (int i = 1; i <= 11; i++) {
     //     stream << "    lw s" << i << ", " << stacksize - 8 - 4 * i << "(sp)" << std::endl;
     // }
 
-    // 恢复返回地址和帧指针
+
     stream << "    lw ra, " << stacksize - 4 << "(sp)" << std::endl;
     stream << "    lw s0, " << stacksize - 8 << "(sp)" << std::endl;
-    stream << "    addi sp, sp, " << stacksize  << std::endl;  // 释放栈空间
+    stream << "    addi sp, sp, " << stacksize  << std::endl;
 
-    // 返回
+
     stream << "    ret" << std::endl;
     context.exitScope();
     stream << std::endl;
@@ -113,18 +113,18 @@ void FunctionDefinition::EmitRISC(std::ostream& stream, Context& context) const
 
 void FunctionDefinition::Print(std::ostream& stream) const
 {
-    // 打印返回类型
+
     stream << return_type_ << " ";
 
-    // 打印函数名
+
     if (declarator_ != nullptr) {
         declarator_->Print(stream);
     }
 
-    // 打印参数列表
+
     stream << "(";
 
-    // 如果有参数，则打印它们
+
     for (size_t i = 0; i < parameter_list_.size(); i++) {
         if (i > 0) {
             stream << ", ";
@@ -136,14 +136,14 @@ void FunctionDefinition::Print(std::ostream& stream) const
         }
     }
 
-    // 如果没有参数，打印void
+
     if (parameter_list_.empty()) {
         stream << "void";
     }
 
     stream << ")" << std::endl;
 
-    // 打印函数体
+
     if (compound_statement_ != nullptr) {
         compound_statement_->Print(stream);
     }

@@ -29,7 +29,7 @@ void FunctionDeclaration::EmitRISC(std::ostream& stream, Context& ) const
 
 void FunctionDeclaration::Print(std::ostream& stream) const
 {
-    // 打印返回类型
+
     stream << return_type_ << " ";
 
 

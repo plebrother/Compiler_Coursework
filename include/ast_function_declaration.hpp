@@ -11,10 +11,10 @@ class FunctionDeclaration : public Node
 {
 private:
     const TypeSpecifier return_type_;
-    NodePtr declarator_;        // 包含函数名和参数列表
+    NodePtr declarator_;
 
 public:
-    // 构造函数
+
     FunctionDeclaration(TypeSpecifier return_type,
                       NodePtr declarator)
         : return_type_(return_type),

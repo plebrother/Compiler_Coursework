@@ -15,8 +15,8 @@ enum class AssignmentOp {
     AndAssign,    // &=
     OrAssign,     // |=
     XorAssign,    // ^=
-    LeftAssign,   // <<=  添加这行
-    RightAssign   // >>=  添加这行
+    LeftAssign,   // <<=
+    RightAssign   // >>=
 };
 class AssignmentExpression : public Node {
 private:

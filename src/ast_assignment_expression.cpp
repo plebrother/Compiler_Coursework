@@ -7,9 +7,7 @@ namespace ast {
 
 void AssignmentExpression::EmitRISC(std::ostream& stream, Context& context) const
 {
-    // For simple assignments, we need to:
-    // 1. Evaluate the right-hand side expression (result will be in a0)
-    // 2. Store the result into the memory location of the left-hand side variable
+
 
     // First, evaluate the right-hand side expression
     right_->EmitRISC(stream, context);
@@ -122,10 +120,10 @@ void AssignmentExpression::Print(std::ostream& stream) const
         case AssignmentOp::XorAssign:
             stream << " ^= ";
             break;
-        case AssignmentOp::LeftAssign:  // 添加这个case
+        case AssignmentOp::LeftAssign:
             stream << " <<= ";
             break;
-        case AssignmentOp::RightAssign: // 添加这个case
+        case AssignmentOp::RightAssign:
             stream << " >>= ";
             break;
     }

@@ -13,13 +13,13 @@ private:
     const TypeSpecifier return_type_;
     NodePtr declarator_;
     NodePtr compound_statement_;
-    std::vector<NodePtr> parameter_list_; // 新增：函数参数列表
+    std::vector<NodePtr> parameter_list_;
 
-    // 计算函数所需栈空间大小的辅助方法
+
     int calculateStackSize() const;
 
 public:
-    // 更新构造函数以支持参数列表
+
     FunctionDefinition(TypeSpecifier return_type,
                       NodePtr declarator,
                       NodePtr compound_statement,

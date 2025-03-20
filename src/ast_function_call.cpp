@@ -78,7 +78,7 @@ void FunctionCall::Print(std::ostream& stream) const
 {
     stream << function_name_ << "(";
 
-    // 打印参数列表
+
     if (arguments_ != nullptr) {
         const std::vector<NodePtr>& args = arguments_->getNodes();
         for (size_t i = 0; i < args.size(); ++i) {

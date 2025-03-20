@@ -4,7 +4,7 @@
 
 namespace ast {
 
-// 枚举类型表示各种一元运算符
+
 enum class UnaryOp {
     Positive,   // +
     Negative,   // -
@@ -22,7 +22,6 @@ enum class PostOp {
 
 };
 
-// 一元表达式节点类
 class UnaryExpression : public Node {
 private:
 UnaryOp op_;
