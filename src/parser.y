@@ -86,7 +86,7 @@ function_definition
 	| declarator declaration_list compound_statement
 	| declarator compound_statement
 	| declaration_specifiers declarator ';' {
-		$$ = new FunctionDefinition($1, NodePtr($2), nullptr); //JUST FOR TEST   NOT SURE IF IT CAUSES ANY PROBLEM
+		$$ = new FunctionDeclaration($1, NodePtr($2)); //JUST FOR TEST   NOT SURE IF IT CAUSES ANY PROBLEM
 	}
 	;
 
