@@ -20,7 +20,6 @@ public:
 
     void EmitRISC(std::ostream& stream, Context& context) const override;
     void Print(std::ostream& stream) const override;
-
 };
 
 } // namespace ast

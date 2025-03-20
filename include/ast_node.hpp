@@ -22,6 +22,7 @@ public:
 // (and get rid of the now unnecessary std::move-s)
 using NodePtr = std::unique_ptr<const Node>;
 
+
 class NodeList : public Node
 {
 private:
@@ -31,8 +32,10 @@ public:
     NodeList(NodePtr first_node) { nodes_.push_back(std::move(first_node)); }
 
     void PushBack(NodePtr item);
+    const std::vector<NodePtr>& getNodes() const { return nodes_; }
     virtual void EmitRISC(std::ostream& stream, Context& context) const override;
     virtual void Print(std::ostream& stream) const override;
 };
 
+using NodeListPtr = std::unique_ptr<const NodeList>;
 } // namespace ast

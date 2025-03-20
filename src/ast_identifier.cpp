@@ -12,4 +12,8 @@ void Identifier::Print(std::ostream& stream) const
     stream << identifier_;
 };
 
+std::string Identifier::getName() const {
+    return identifier_;
+}
+
 }

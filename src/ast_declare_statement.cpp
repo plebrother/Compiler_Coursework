@@ -13,19 +13,19 @@ void DeclareStatement::EmitRISC(std::ostream& stream, Context& context) const
     {
         declarator_->EmitRISC(stream, context);
     }
-    stream << ":" << std::endl;
-    stream << ".zero 4" << std::endl;
+    //stream << ":" << std::endl;
+    //stream << ".zero 4" << std::endl;
 }
 
 void DeclareStatement::Print(std::ostream& stream) const
 {
-    stream << declaration_specifiers_;
+    //stream << declaration_specifiers_;
     if (declarator_ != nullptr)
     {
-        stream << " ";
+        //stream << " ";
         declarator_->Print(stream);
     }
-    stream << ";" << std::endl;
+    //stream << ";" << std::endl;
 }
 
 }

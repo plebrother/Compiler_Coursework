@@ -4,8 +4,11 @@ namespace ast {
 
 void DirectDeclarator::EmitRISC(std::ostream& stream, Context& context) const
 {
-    identifier_->EmitRISC(stream, context);
-    stream << ":" << std::endl;
+    //identifier_->EmitRISC(stream, context);
+    //stream << ":" << std::endl;
+    if (parameter_list_ != nullptr){
+        parameter_list_->EmitRISC(stream,context);
+    }
 }
 
 void DirectDeclarator::Print(std::ostream& stream) const

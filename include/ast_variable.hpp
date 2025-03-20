@@ -4,17 +4,16 @@
 
 namespace ast {
 
-class Identifier : public Node
-{
+class VariableReference : public Node {
 private:
-    std::string identifier_;
+    std::string name_;
 
 public:
-    Identifier(std::string identifier) : identifier_(std::move(identifier)){};
+    VariableReference(const std::string& name) : name_(name) {}
 
     void EmitRISC(std::ostream& stream, Context& context) const override;
     void Print(std::ostream& stream) const override;
-    std::string getName() const ;
+    const std::string& getName() const { return name_; }
 };
 
 } // namespace ast

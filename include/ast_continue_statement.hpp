@@ -4,17 +4,13 @@
 
 namespace ast {
 
-class Identifier : public Node
-{
-private:
-    std::string identifier_;
-
+// Continue statement for use within loops
+class ContinueStatement : public Node {
 public:
-    Identifier(std::string identifier) : identifier_(std::move(identifier)){};
+    ContinueStatement() {}
 
     void EmitRISC(std::ostream& stream, Context& context) const override;
     void Print(std::ostream& stream) const override;
-    std::string getName() const ;
 };
 
 } // namespace ast
