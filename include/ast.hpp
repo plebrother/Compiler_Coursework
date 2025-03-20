@@ -28,5 +28,6 @@
 #include "ast_parameter.hpp"
 #include "ast_function_call.hpp"
 #include "ast_function_declaration.hpp"
+#include "ast_unary_expression.hpp"
 
 ast::NodePtr ParseAST(std::string file_name);

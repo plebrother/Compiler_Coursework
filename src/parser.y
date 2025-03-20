@@ -25,6 +25,7 @@
   TypeSpecifier 	type_specifier;
   yytokentype  		token;
   int             assign_op;
+  UnaryOp unary_operator;
 }
 
 %token IDENTIFIER INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL
@@ -47,8 +48,9 @@
 
 %type <node_list> statement_list parameter_list init_declarator_list declaration_list
 
-%type <string> unary_operator storage_class_specifier
+%type <string> storage_class_specifier
 %type <assign_op> assignment_operator
+%type <unary_operator> unary_operator
 
 %type <number_int> INT_CONSTANT STRING_LITERAL
 %type <number_float> FLOAT_CONSTANT
@@ -112,8 +114,8 @@ postfix_expression
 	| IDENTIFIER '(' argument_expression_list ')' { $$ = new FunctionCall(*$1,NodeListPtr($3)); }
 	| postfix_expression '.' IDENTIFIER
 	| postfix_expression PTR_OP IDENTIFIER
-	| postfix_expression INC_OP
-	| postfix_expression DEC_OP
+	| postfix_expression INC_OP { $$ = new PostfixExpression(PostOp::PostIncrement,NodePtr($1)); }
+	| postfix_expression DEC_OP { $$ = new PostfixExpression(PostOp::PostDecrement,NodePtr($1)); }
 	;
 
 argument_expression_list
@@ -126,20 +128,20 @@ argument_expression_list
 
 unary_expression
 	: postfix_expression
-	| INC_OP unary_expression
-	| DEC_OP unary_expression
-	| unary_operator cast_expression
+	| INC_OP unary_expression  			{ $$ = new UnaryExpression(UnaryOp::PreIncrement,NodePtr($2)); }
+	| DEC_OP unary_expression 			{ $$ = new UnaryExpression(UnaryOp::PreDecrement,NodePtr($2)); }
+	| unary_operator cast_expression 	{ $$ = new UnaryExpression($1,NodePtr($2)); }
 	| SIZEOF unary_expression
 	| SIZEOF '(' type_name ')'
 	;
 
 unary_operator
-	: '&'
-	| '*'
-	| '+'
-	| '-'
-	| '~'
-	| '!'
+	: '&' { $$ = UnaryOp::AddressOf; }
+	| '*' { $$ = UnaryOp::Dereference; }
+	| '+' { $$ = UnaryOp::Positive; }
+	| '-' { $$ = UnaryOp::Negative; }
+	| '~' { $$ = UnaryOp::BitwiseNot; }
+	| '!' { $$ = UnaryOp::LogicalNot; }
 	;
 
 cast_expression
@@ -248,14 +250,15 @@ assignment_expression
 		AssignmentOp op;
         switch ($2) {
             case 0: op = AssignmentOp::Assign; break;
-            case 1: op = AssignmentOp::MulAssign; break;
-            case 2: op = AssignmentOp::DivAssign; break;
-            case 3: op = AssignmentOp::ModAssign; break;
-            case 4: op = AssignmentOp::AddAssign; break;
-            case 5: op = AssignmentOp::SubAssign; break;
+            case 1: op = AssignmentOp::AddAssign; break;
+            case 2: op = AssignmentOp::SubAssign; break;
+            case 3: op = AssignmentOp::MulAssign; break;
+            case 4: op = AssignmentOp::DivAssign; break;
+            case 5: op = AssignmentOp::ModAssign; break;
+            case 7: op = AssignmentOp::OrAssign; break;
             case 6: op = AssignmentOp::AndAssign; break;
-            case 7: op = AssignmentOp::XorAssign; break;
-            case 8: op = AssignmentOp::OrAssign; break;
+            case 8: op = AssignmentOp::XorAssign; break;
+
 
             default: std::cerr << "Unknown assignment operator" << std::endl; exit(1);
         }
